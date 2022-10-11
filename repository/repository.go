@@ -15,4 +15,6 @@ type UserRepo interface {
 
 type RelationsRepo interface {
 	CreateRelation(ctx context.Context, requesterId int, addresseeId int) (bool, error)
+
+	GetRelationByIds(ctx context.Context, requesterId int, addresseeId int) (models.Relation, error)
 }

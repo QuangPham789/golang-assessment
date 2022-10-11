@@ -18,6 +18,14 @@ type relationsRepository struct {
 	connection *sql.DB
 }
 
+func (repo relationsRepository) GetRelationByIds(ctx context.Context, requesterId int, addresseeId int) (models.Relation, error) {
+	var relationResult models.Relation
+	if err := models.Users(models.RelationWhere.RequesterID.EQ(requesterId), models.RelationWhere.AddresseeID.EQ(addresseeId)).Bind(ctx, repo.connection, &relationResult); err != nil {
+		return models.Relation{}, err
+	}
+	return relationResult, nil
+}
+
 func (repo relationsRepository) CreateRelation(ctx context.Context, requesterId int, addresseeId int) (bool, error) {
 	var relation = models.Relation{}
 	relation.RequesterID = requesterId

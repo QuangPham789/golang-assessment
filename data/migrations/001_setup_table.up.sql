@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS relations
     id         SERIAL PRIMARY KEY,
     requester_id     INTEGER NOT NULL REFERENCES users(id),
     addressee_id     INTEGER NOT NULL REFERENCES users(id),
+    relation_type INTEGER DEFAULT 0,
     created_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at  TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );
