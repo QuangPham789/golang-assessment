@@ -21,11 +21,9 @@ func NewUserHandler(db *sql.DB) UserHandler {
 }
 
 type UserRequest struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	IsActive  bool   `json:"is_active"`
+	Email    string `json:"email"`
+	Phone    string `json:"phone"`
+	IsActive bool   `json:"is_active"`
 }
 
 func (user UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -53,16 +51,6 @@ func (user UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func validateUserInput(user UserRequest) (service.CreateUserInput, error) {
-	firstName := strings.TrimSpace(user.FirstName)
-	if firstName == "" {
-		return service.CreateUserInput{}, errNameCannotBeBlank
-	}
-
-	lastName := strings.TrimSpace(user.LastName)
-	if lastName == "" {
-		return service.CreateUserInput{}, errNameCannotBeBlank
-	}
-
 	email := strings.TrimSpace(user.Email)
 	if email == "" {
 		return service.CreateUserInput{}, errEmailCannotBeBlank
@@ -72,10 +60,8 @@ func validateUserInput(user UserRequest) (service.CreateUserInput, error) {
 	}
 
 	return service.CreateUserInput{
-		FirstName: firstName,
-		LastName:  lastName,
-		Email:     email,
-		Phone:     user.Phone,
-		IsActive:  user.IsActive,
+		Email:    email,
+		Phone:    user.Phone,
+		IsActive: user.IsActive,
 	}, nil
 }

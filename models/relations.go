@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"github.com/friendsofgo/errors"
+	"github.com/volatiletech/null/v8"
 	"github.com/volatiletech/sqlboiler/v4/boil"
 	"github.com/volatiletech/sqlboiler/v4/queries"
 	"github.com/volatiletech/sqlboiler/v4/queries/qm"
@@ -23,42 +24,57 @@ import (
 
 // Relation is an object representing the database table.
 type Relation struct {
-	ID          int       `boil:"id" json:"id" toml:"id" yaml:"id"`
-	RequesterID int       `boil:"requester_id" json:"requester_id" toml:"requester_id" yaml:"requester_id"`
-	AddresseeID int       `boil:"addressee_id" json:"addressee_id" toml:"addressee_id" yaml:"addressee_id"`
-	CreatedAt   time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
-	UpdatedAt   time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
+	ID             int       `boil:"id" json:"id" toml:"id" yaml:"id"`
+	RequesterID    int       `boil:"requester_id" json:"requester_id" toml:"requester_id" yaml:"requester_id"`
+	AddresseeID    int       `boil:"addressee_id" json:"addressee_id" toml:"addressee_id" yaml:"addressee_id"`
+	RequesterEmail string    `boil:"requester_email" json:"requester_email" toml:"requester_email" yaml:"requester_email"`
+	AddresseeEmail string    `boil:"addressee_email" json:"addressee_email" toml:"addressee_email" yaml:"addressee_email"`
+	RelationType   int  `boil:"relation_type" json:"relation_type,omitempty" toml:"relation_type" yaml:"relation_type,omitempty"`
+	CreatedAt      time.Time `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
+	UpdatedAt      time.Time `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
 	R *relationR `boil:"-" json:"-" toml:"-" yaml:"-"`
 	L relationL  `boil:"-" json:"-" toml:"-" yaml:"-"`
 }
 
 var RelationColumns = struct {
-	ID          string
-	RequesterID string
-	AddresseeID string
-	CreatedAt   string
-	UpdatedAt   string
+	ID             string
+	RequesterID    string
+	AddresseeID    string
+	RequesterEmail string
+	AddresseeEmail string
+	RelationType   string
+	CreatedAt      string
+	UpdatedAt      string
 }{
-	ID:          "id",
-	RequesterID: "requester_id",
-	AddresseeID: "addressee_id",
-	CreatedAt:   "created_at",
-	UpdatedAt:   "updated_at",
+	ID:             "id",
+	RequesterID:    "requester_id",
+	AddresseeID:    "addressee_id",
+	RequesterEmail: "requester_email",
+	AddresseeEmail: "addressee_email",
+	RelationType:   "relation_type",
+	CreatedAt:      "created_at",
+	UpdatedAt:      "updated_at",
 }
 
 var RelationTableColumns = struct {
-	ID          string
-	RequesterID string
-	AddresseeID string
-	CreatedAt   string
-	UpdatedAt   string
+	ID             string
+	RequesterID    string
+	AddresseeID    string
+	RequesterEmail string
+	AddresseeEmail string
+	RelationType   string
+	CreatedAt      string
+	UpdatedAt      string
 }{
-	ID:          "relations.id",
-	RequesterID: "relations.requester_id",
-	AddresseeID: "relations.addressee_id",
-	CreatedAt:   "relations.created_at",
-	UpdatedAt:   "relations.updated_at",
+	ID:             "relations.id",
+	RequesterID:    "relations.requester_id",
+	AddresseeID:    "relations.addressee_id",
+	RequesterEmail: "relations.requester_email",
+	AddresseeEmail: "relations.addressee_email",
+	RelationType:   "relations.relation_type",
+	CreatedAt:      "relations.created_at",
+	UpdatedAt:      "relations.updated_at",
 }
 
 // Generated where
@@ -86,6 +102,67 @@ func (w whereHelperint) NIN(slice []int) qm.QueryMod {
 	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
 }
 
+type whereHelperstring struct{ field string }
+
+func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
+func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
+func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
+func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
+func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
+func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
+func (w whereHelperstring) IN(slice []string) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
+
+type whereHelpernull_Int struct{ field string }
+
+func (w whereHelpernull_Int) EQ(x null.Int) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, false, x)
+}
+func (w whereHelpernull_Int) NEQ(x null.Int) qm.QueryMod {
+	return qmhelper.WhereNullEQ(w.field, true, x)
+}
+func (w whereHelpernull_Int) LT(x null.Int) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LT, x)
+}
+func (w whereHelpernull_Int) LTE(x null.Int) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.LTE, x)
+}
+func (w whereHelpernull_Int) GT(x null.Int) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GT, x)
+}
+func (w whereHelpernull_Int) GTE(x null.Int) qm.QueryMod {
+	return qmhelper.Where(w.field, qmhelper.GTE, x)
+}
+func (w whereHelpernull_Int) IN(slice []int) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
+}
+func (w whereHelpernull_Int) NIN(slice []int) qm.QueryMod {
+	values := make([]interface{}, 0, len(slice))
+	for _, value := range slice {
+		values = append(values, value)
+	}
+	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
+}
+
+func (w whereHelpernull_Int) IsNull() qm.QueryMod    { return qmhelper.WhereIsNull(w.field) }
+func (w whereHelpernull_Int) IsNotNull() qm.QueryMod { return qmhelper.WhereIsNotNull(w.field) }
+
 type whereHelpertime_Time struct{ field string }
 
 func (w whereHelpertime_Time) EQ(x time.Time) qm.QueryMod {
@@ -108,17 +185,23 @@ func (w whereHelpertime_Time) GTE(x time.Time) qm.QueryMod {
 }
 
 var RelationWhere = struct {
-	ID          whereHelperint
-	RequesterID whereHelperint
-	AddresseeID whereHelperint
-	CreatedAt   whereHelpertime_Time
-	UpdatedAt   whereHelpertime_Time
+	ID             whereHelperint
+	RequesterID    whereHelperint
+	AddresseeID    whereHelperint
+	RequesterEmail whereHelperstring
+	AddresseeEmail whereHelperstring
+	RelationType   whereHelpernull_Int
+	CreatedAt      whereHelpertime_Time
+	UpdatedAt      whereHelpertime_Time
 }{
-	ID:          whereHelperint{field: "\"relations\".\"id\""},
-	RequesterID: whereHelperint{field: "\"relations\".\"requester_id\""},
-	AddresseeID: whereHelperint{field: "\"relations\".\"addressee_id\""},
-	CreatedAt:   whereHelpertime_Time{field: "\"relations\".\"created_at\""},
-	UpdatedAt:   whereHelpertime_Time{field: "\"relations\".\"updated_at\""},
+	ID:             whereHelperint{field: "\"relations\".\"id\""},
+	RequesterID:    whereHelperint{field: "\"relations\".\"requester_id\""},
+	AddresseeID:    whereHelperint{field: "\"relations\".\"addressee_id\""},
+	RequesterEmail: whereHelperstring{field: "\"relations\".\"requester_email\""},
+	AddresseeEmail: whereHelperstring{field: "\"relations\".\"addressee_email\""},
+	RelationType:   whereHelpernull_Int{field: "\"relations\".\"relation_type\""},
+	CreatedAt:      whereHelpertime_Time{field: "\"relations\".\"created_at\""},
+	UpdatedAt:      whereHelpertime_Time{field: "\"relations\".\"updated_at\""},
 }
 
 // RelationRels is where relationship names are stored.
@@ -159,9 +242,9 @@ func (r *relationR) GetRequester() *User {
 type relationL struct{}
 
 var (
-	relationAllColumns            = []string{"id", "requester_id", "addressee_id", "created_at", "updated_at"}
-	relationColumnsWithoutDefault = []string{"requester_id", "addressee_id"}
-	relationColumnsWithDefault    = []string{"id", "created_at", "updated_at"}
+	relationAllColumns            = []string{"id", "requester_id", "addressee_id", "requester_email", "addressee_email", "relation_type", "created_at", "updated_at"}
+	relationColumnsWithoutDefault = []string{"requester_id", "addressee_id", "requester_email", "addressee_email"}
+	relationColumnsWithDefault    = []string{"id", "relation_type", "created_at", "updated_at"}
 	relationPrimaryKeyColumns     = []string{"id"}
 	relationGeneratedColumns      = []string{}
 )

@@ -1,6 +1,7 @@
 package utils
 
 const (
-	UserRoleNormal = "NORMAL"
-	UserRoleAdmin  = "ADMIN"
+	FriendRelation = 1
+	Subscribe      = 2
+	Block          = 3
 )

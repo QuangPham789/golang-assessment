@@ -37,7 +37,7 @@ func initRouter(dbConn *sql.DB) *chi.Mux {
 	// create: main router
 	router.Route("/", func(r chi.Router) {
 		r.Mount("/users", userRouter(userHandler))
-		r.Mount("/createrelation", relationRouter(relationHandler))
+		r.Mount("/relations", relationRouter(relationHandler))
 	})
 	return router
 }
@@ -51,7 +51,10 @@ func userRouter(userHandler handler.UserHandler) http.Handler {
 
 func relationRouter(relationHandler handler.RelationsHandler) http.Handler {
 	router := chi.NewRouter()
-	router.Post("/", relationHandler.CreateRelation)
+	router.Post("/getfriendfromemail", relationHandler.GetAllFriendOfUser)
+	router.Post("/createrelation", relationHandler.CreateRelation)
+	router.Post("/getcommonfriends", relationHandler.GetCommonFriend)
+
 	return router
 }
 

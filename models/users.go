@@ -25,13 +25,9 @@ import (
 // User is an object representing the database table.
 type User struct {
 	ID        int         `boil:"id" json:"id" toml:"id" yaml:"id"`
-	Firstname string      `boil:"firstname" json:"firstname" toml:"firstname" yaml:"firstname"`
-	Lastname  string      `boil:"lastname" json:"lastname" toml:"lastname" yaml:"lastname"`
 	Email     string      `boil:"email" json:"email" toml:"email" yaml:"email"`
 	Phone     null.String `boil:"phone" json:"phone,omitempty" toml:"phone" yaml:"phone,omitempty"`
 	IsActive  null.Bool   `boil:"is_active" json:"is_active,omitempty" toml:"is_active" yaml:"is_active,omitempty"`
-	Subscribe null.String `boil:"subscribe" json:"subscribe,omitempty" toml:"subscribe" yaml:"subscribe,omitempty"`
-	Blocks    null.String `boil:"blocks" json:"blocks,omitempty" toml:"blocks" yaml:"blocks,omitempty"`
 	CreatedAt time.Time   `boil:"created_at" json:"created_at" toml:"created_at" yaml:"created_at"`
 	UpdatedAt time.Time   `boil:"updated_at" json:"updated_at" toml:"updated_at" yaml:"updated_at"`
 
@@ -41,76 +37,37 @@ type User struct {
 
 var UserColumns = struct {
 	ID        string
-	Firstname string
-	Lastname  string
 	Email     string
 	Phone     string
 	IsActive  string
-	Subscribe string
-	Blocks    string
 	CreatedAt string
 	UpdatedAt string
 }{
 	ID:        "id",
-	Firstname: "firstname",
-	Lastname:  "lastname",
 	Email:     "email",
 	Phone:     "phone",
 	IsActive:  "is_active",
-	Subscribe: "subscribe",
-	Blocks:    "blocks",
 	CreatedAt: "created_at",
 	UpdatedAt: "updated_at",
 }
 
 var UserTableColumns = struct {
 	ID        string
-	Firstname string
-	Lastname  string
 	Email     string
 	Phone     string
 	IsActive  string
-	Subscribe string
-	Blocks    string
 	CreatedAt string
 	UpdatedAt string
 }{
 	ID:        "users.id",
-	Firstname: "users.firstname",
-	Lastname:  "users.lastname",
 	Email:     "users.email",
 	Phone:     "users.phone",
 	IsActive:  "users.is_active",
-	Subscribe: "users.subscribe",
-	Blocks:    "users.blocks",
 	CreatedAt: "users.created_at",
 	UpdatedAt: "users.updated_at",
 }
 
 // Generated where
-
-type whereHelperstring struct{ field string }
-
-func (w whereHelperstring) EQ(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.EQ, x) }
-func (w whereHelperstring) NEQ(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.NEQ, x) }
-func (w whereHelperstring) LT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.LT, x) }
-func (w whereHelperstring) LTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.LTE, x) }
-func (w whereHelperstring) GT(x string) qm.QueryMod  { return qmhelper.Where(w.field, qmhelper.GT, x) }
-func (w whereHelperstring) GTE(x string) qm.QueryMod { return qmhelper.Where(w.field, qmhelper.GTE, x) }
-func (w whereHelperstring) IN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereIn(fmt.Sprintf("%s IN ?", w.field), values...)
-}
-func (w whereHelperstring) NIN(slice []string) qm.QueryMod {
-	values := make([]interface{}, 0, len(slice))
-	for _, value := range slice {
-		values = append(values, value)
-	}
-	return qm.WhereNotIn(fmt.Sprintf("%s NOT IN ?", w.field), values...)
-}
 
 type whereHelpernull_String struct{ field string }
 
@@ -176,24 +133,16 @@ func (w whereHelpernull_Bool) IsNotNull() qm.QueryMod { return qmhelper.WhereIsN
 
 var UserWhere = struct {
 	ID        whereHelperint
-	Firstname whereHelperstring
-	Lastname  whereHelperstring
 	Email     whereHelperstring
 	Phone     whereHelpernull_String
 	IsActive  whereHelpernull_Bool
-	Subscribe whereHelpernull_String
-	Blocks    whereHelpernull_String
 	CreatedAt whereHelpertime_Time
 	UpdatedAt whereHelpertime_Time
 }{
 	ID:        whereHelperint{field: "\"users\".\"id\""},
-	Firstname: whereHelperstring{field: "\"users\".\"firstname\""},
-	Lastname:  whereHelperstring{field: "\"users\".\"lastname\""},
 	Email:     whereHelperstring{field: "\"users\".\"email\""},
 	Phone:     whereHelpernull_String{field: "\"users\".\"phone\""},
 	IsActive:  whereHelpernull_Bool{field: "\"users\".\"is_active\""},
-	Subscribe: whereHelpernull_String{field: "\"users\".\"subscribe\""},
-	Blocks:    whereHelpernull_String{field: "\"users\".\"blocks\""},
 	CreatedAt: whereHelpertime_Time{field: "\"users\".\"created_at\""},
 	UpdatedAt: whereHelpertime_Time{field: "\"users\".\"updated_at\""},
 }
@@ -236,9 +185,9 @@ func (r *userR) GetRequesterRelations() RelationSlice {
 type userL struct{}
 
 var (
-	userAllColumns            = []string{"id", "firstname", "lastname", "email", "phone", "is_active", "subscribe", "blocks", "created_at", "updated_at"}
+	userAllColumns            = []string{"id", "email", "phone", "is_active", "created_at", "updated_at"}
 	userColumnsWithoutDefault = []string{"email"}
-	userColumnsWithDefault    = []string{"id", "firstname", "lastname", "phone", "is_active", "subscribe", "blocks", "created_at", "updated_at"}
+	userColumnsWithDefault    = []string{"id", "phone", "is_active", "created_at", "updated_at"}
 	userPrimaryKeyColumns     = []string{"id"}
 	userGeneratedColumns      = []string{}
 )

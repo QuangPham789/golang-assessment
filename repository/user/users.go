@@ -18,10 +18,11 @@ type userRepository struct {
 	connection *sql.DB
 }
 
-func (repo userRepository) GetUserByID(ctx context.Context, id int) (*models.User, error) {
-	userResult, err := models.FindUser(ctx, repo.connection, id)
+func (repo userRepository) GetUserByID(ctx context.Context, id int) (models.User, error) {
+	var userResult models.User
+	err := models.Users(models.UserWhere.ID.EQ(id)).Bind(ctx, repo.connection, &userResult)
 	if err != nil {
-		return nil, err
+		return models.User{}, err
 	}
 	return userResult, nil
 }

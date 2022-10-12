@@ -36,12 +36,10 @@ func TestHandler_CreateUser(t *testing.T) {
 	}{
 		"success": {
 			result: service.UserResponse{
-				ID:        15,
-				FirstName: "Quang",
-				LastName:  "Pham",
-				Email:     "nhutquang23@gmail.com",
-				Phone:     "031544284",
-				IsActive:  false,
+				ID:       15,
+				Email:    "nhutquang23@gmail.com",
+				Phone:    "031544284",
+				IsActive: false,
 			},
 		},
 		"error name cannot blank": {},
@@ -84,18 +82,14 @@ func TestHandler_ValidateUserInput(t *testing.T) {
 	}{
 		"success": {
 			input: UserRequest{
-				FirstName: "Quang",
-				LastName:  "Pham",
-				Email:     "nhutquang23@gmail.com",
-				Phone:     "02312545678",
-				IsActive:  true,
+				Email:    "nhutquang23@gmail.com",
+				Phone:    "02312545678",
+				IsActive: true,
 			},
 			expResult: service.CreateUserInput{
-				FirstName: "Quang",
-				LastName:  "Pham",
-				Email:     "nhutquang23@gmail.com",
-				Phone:     "0343450044",
-				IsActive:  true,
+				Email:    "nhutquang23@gmail.com",
+				Phone:    "0343450044",
+				IsActive: true,
 			},
 		},
 		"nameCannotBeBlank": {
@@ -108,32 +102,19 @@ func TestHandler_ValidateUserInput(t *testing.T) {
 		},
 		"email cannot be blank": {
 			input: UserRequest{
-				FirstName: "Quang",
-				LastName:  "Pham",
-				Phone:     "0343450044",
-				IsActive:  true,
+				Phone:    "0343450044",
+				IsActive: true,
 			},
 			expErr: errEmailCannotBeBlank,
 		},
 		"invalidEmail": {
 			input: UserRequest{
-				FirstName: "Quang",
-				LastName:  "Pham",
-				Email:     "Thang12344email",
-				Phone:     "0343450044",
-				IsActive:  true,
+				Email:    "Thang12344email",
+				Phone:    "0343450044",
+				IsActive: true,
 			},
 			expErr: errInvalidEmail,
 		},
-		"roleNotExist": {
-			input: UserRequest{
-				FirstName: "Quang",
-				LastName:  "Pham",
-				Email:     "Thang12344@gmail.com",
-				Phone:     "0343450044",
-				IsActive:  true,
-			},
-			expErr: errRoleNotExist},
 	}
 
 	for desc, tc := range tcs {

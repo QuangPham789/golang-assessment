@@ -19,18 +19,14 @@ func TestRepository_CreateUser(t *testing.T) {
 	}{
 		"success": {
 			input: models.User{
-				Firstname: "Quang",
-				Lastname:  "Pham",
-				Email:     "nhutquang23@gmail.com",
-				Phone:     null.StringFrom("0343450044"),
-				IsActive:  null.BoolFrom(true),
+				Email:    "nhutquang23@gmail.com",
+				Phone:    null.StringFrom("0343450044"),
+				IsActive: null.BoolFrom(true),
 			},
 			expResult: models.User{
-				Firstname: "Quang",
-				Lastname:  "Pham",
-				Email:     "nhutquang23@gmail.com",
-				Phone:     null.StringFrom("0343450044"),
-				IsActive:  null.BoolFrom(true),
+				Email:    "nhutquang23@gmail.com",
+				Phone:    null.StringFrom("0343450044"),
+				IsActive: null.BoolFrom(true),
 			},
 		},
 		// TODO: "error duplicate email"
@@ -75,11 +71,9 @@ func TestRepository_GetUserByEmail(t *testing.T) {
 		"success": {
 			input: "nhutquang23@gmail.com",
 			expResult: models.User{
-				Firstname: "Quang",
-				Lastname:  "Pham",
-				Email:     "nhutquang23@gmail.com",
-				Phone:     null.StringFrom("123456"),
-				IsActive:  null.BoolFrom(true),
+				Email:    "nhutquang23@gmail.com",
+				Phone:    null.StringFrom("123456"),
+				IsActive: null.BoolFrom(true),
 			},
 		},
 		// TODO: "error duplicate email"
@@ -90,6 +84,7 @@ func TestRepository_GetUserByEmail(t *testing.T) {
 	for desc, tc := range tcs {
 		t.Run(desc, func(t *testing.T) {
 			ctx := context.Background()
+
 			// Connect DB test
 			dbConn, err := db.ConnectDB(dbURL)
 			require.NoError(t, err)
@@ -124,11 +119,9 @@ func TestRepository_GetUserByID(t *testing.T) {
 		"success": {
 			input: 3,
 			expResult: models.User{
-				Firstname: "Quang",
-				Lastname:  "Pham",
-				Email:     "nhutquang23@gmail.com",
-				Phone:     null.StringFrom("0343450044"),
-				IsActive:  null.BoolFrom(true),
+				Email:    "nhutquang23@gmail.com",
+				Phone:    null.StringFrom("0343450044"),
+				IsActive: null.BoolFrom(true),
 			},
 		},
 		// TODO: "error duplicate email"
